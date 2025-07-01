@@ -21,10 +21,10 @@ void	ft_bzero(void *s, size_t n)
 		*temp++ = 0;
 }
 
-void	ft_gnl_clear(t_gnl **lst)
+void	ft_lst_clear(t_lst **lst)
 {
 	if ((*lst)->next)
-		ft_gnl_clear(&((*lst)->next));
+		ft_lst_clear(&((*lst)->next));
 	free((*lst)->buf);
 	free(*lst);
 	*lst = NULL;

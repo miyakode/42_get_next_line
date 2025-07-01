@@ -14,8 +14,8 @@
 
 char	*get_next_line(int fd)
 {
-	static t_gnl	*rest[MAX_FD + 1];
-	t_gnl			*lst;
+	static t_lst	*rest[MAX_FD + 1];
+	t_lst			*lst;
 	char			*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || fd > MAX_FD || read(fd, NULL, 0) < 0)
@@ -31,16 +31,16 @@ char	*get_next_line(int fd)
 	if (!lst->nl && !lst->eof && ft_read_fd(fd, lst) == ERROR)
 	{
 		rest[fd] = NULL;
-		return (ft_gnl_clear(&lst), NULL);
+		return (ft_lst_clear(&lst), NULL);
 	}
 	ft_create_line(lst, &line);
 	if (!line && !lst->eof)
-		return (ft_gnl_clear(&lst), NULL);
+		return (ft_lst_clear(&lst), NULL);
 	ft_save_rest(lst, rest, fd);
 	return (line);
 }
 
-int	ft_read_fd(int fd, t_gnl *lst)
+int	ft_read_fd(int fd, t_lst *lst)
 {
 	int	rd_sum;
 
@@ -69,9 +69,9 @@ int	ft_read_fd(int fd, t_gnl *lst)
 	return (SUCCS);
 }
 
-void	ft_create_line(t_gnl *lst, char **line)
+void	ft_create_line(t_lst *lst, char **line)
 {
-	t_gnl	*last;
+	t_lst	*last;
 
 	last = lst;
 	while (last->next)
@@ -95,9 +95,9 @@ void	ft_create_line(t_gnl *lst, char **line)
 	}
 }
 
-void	ft_save_rest(t_gnl *lst, t_gnl *rest[], int fd)
+void	ft_save_rest(t_lst *lst, t_lst *rest[], int fd)
 {
-	t_gnl	*last;
+	t_lst	*last;
 
 	last = lst;
 	while (last->next)
@@ -105,7 +105,7 @@ void	ft_save_rest(t_gnl *lst, t_gnl *rest[], int fd)
 	if (!last->nl)
 	{
 		if (lst->next)
-			ft_gnl_clear(&lst);
+			ft_lst_clear(&lst);
 		rest[fd] = NULL;
 		return ;
 	}
@@ -113,19 +113,19 @@ void	ft_save_rest(t_gnl *lst, t_gnl *rest[], int fd)
 	*(lst->buf) = 0;
 	ft_strncat(lst->buf, last->nl, ft_strlen(last->nl) + 1);
 	if (lst->next)
-		ft_gnl_clear(&(lst->next));
+		ft_lst_clear(&(lst->next));
 	lst->next = NULL;
 	lst->len = ft_strlen(lst->buf);
 	lst->len_sum = lst->len;
 	rest[fd] = lst;
 }
 
-void	*ft_create_newnode(t_gnl *node)
+void	*ft_create_newnode(t_lst *node)
 {
-	node = malloc(sizeof(t_gnl));
+	node = malloc(sizeof(t_lst));
 	if (!node)
 		return (NULL);
-	ft_bzero(node, sizeof(t_gnl));
+	ft_bzero(node, sizeof(t_lst));
 	node->buf = malloc(BUFFER_SIZE + 1);
 	if (!node->buf)
 		return (NULL);
